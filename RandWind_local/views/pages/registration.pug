@@ -8,6 +8,7 @@ head
   // Bootstrap core CSS
   link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css' integrity='sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS' crossorigin='anonymous')
   link(href='../resources/css/my_style.css' rel='stylesheet')
+  link(rel="stylesheet" href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
 img.img-fluid(src='../resources/img/randwind_logo.png' alt='Registration Page RandWind')
 br
 br
@@ -35,24 +36,24 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
 .container
   form(action='/' method='post')
     .form-group.row
-      label.col-sm-2.col-form-label(for='fullName') Full Name
+      label.col-sm-2.col-form-label(for='fullName') Full Name*
       .col-sm-10
         input#fullName.form-control(type='text' name='fullName' placeholder='Enter Name' required='')
     .form-group.row
-      label.col-sm-2.col-form-label(for='emailAddress') Email address
+      label.col-sm-2.col-form-label(for='emailAddress') Email address*
       .col-sm-10
         input#emailAddress.form-control(type='email' name='emailAddress' placeholder='Enter email' required='')
     .form-group.row
-      label.col-sm-2.col-form-label(for='passwordFirst') Password
+      label.col-sm-2.col-form-label(for='passwordFirst') Password*
       .col-sm-10
         input#passwordFirst.form-control(type='password' name='passwordFirst' placeholder='Password' required='')
     .form-group.row
-      label.col-sm-2.col-form-label(for='passwordConfirm') Confirm Password
+      label.col-sm-2.col-form-label(for='passwordConfirm') Confirm Password*
       .col-sm-10
         input#passwordConfirm.form-control(type='password' name='passwordConfirm' placeholder='Confirm Password' required='')
     fieldset.form-group
       .row
-        legend.col-form-label.col-sm-2.pt-0 Business Purposes
+        legend.col-form-label.col-sm-2.pt-0 Business Purposes*
         .col-sm-10
           .form-check
             input#businessStatusYes.form-check-input(type='radio' name='businessStatus' value='Yes' required='')
@@ -64,7 +65,7 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
               | No
     fieldset.form-group
       .row
-        legend.col-form-label.col-sm-2.pt-0 Security Purposes
+        legend.col-form-label.col-sm-2.pt-0 Security Purposes*
         .col-sm-10
           .form-check
             input#securityStatusYes.form-check-input(type='radio' name='securityStatus' value='Yes' required='')
@@ -74,9 +75,30 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
             input#securityStatusNo.form-check-input(type='radio' name='securityStatus' value='No')
             label.form-check-label(for='securityStatusNo')
               | No
-    input.btn.btn-primary.btn-block(type='submit' value='submit')
+    input#my_submit_button.btn.btn-primary.btn-block(type='submit' value='submit' disabled='')
+    br
+    #message(style='display:block')
+    h3 Password must contain the following:
+    p#letter.invalid
+      | A 
+      b lowercase
+      |  letter
+    p#capital.invalid
+      | A 
+      b capital (uppercase)
+      |  letter
+    p#number.invalid
+      | A 
+      b number
+    p#length.invalid
+      | Minimum 
+      b 8 characters
+    p#match.invalid Password and Confirm Password Match
+
+    
   br
+  
 script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js' integrity='sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut' crossorigin='anonymous')
 script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js' integrity='sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k' crossorigin='anonymous')
-//script(src='../resources/js/my_scripts.js')
+script(src='../resources/js/client_scripts.js')
