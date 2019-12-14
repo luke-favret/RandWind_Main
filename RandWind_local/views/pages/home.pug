@@ -1,0 +1,70 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+  meta(name='description' content='')
+  title RandWind Number Generator
+  link(rel='icon' href='../resources/img/randwind_logo.png' type='image/x-icon')
+  // Bootstrap core CSS
+  link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css' integrity='sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS' crossorigin='anonymous')
+  link(href='../resources/css/my_style.css' rel='stylesheet')
+nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
+  a.navbar-brand(href='/')
+    img(src='../resources/img/randwind_logo.png' alt='' width='30%' height='30%')
+  button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarText' aria-controls='navbarText' aria-expanded='false' aria-label='Toggle navigation')
+    span.navbar-toggler-icon
+  #navbarText.collapse.navbar-collapse
+    ul.navbar-nav.mr-auto
+      li.nav-item.active
+        a.nav-link(href='/') Home
+      li.nav-item
+        a.nav-link(href='/about')
+          | About
+          span.sr-only (current)
+      li.nav-item
+        a.nav-link(href='/saved_strings') My Generations
+      li.nav-item
+        a.nav-link(href='/login') Login
+      li.nav-item
+        a.nav-link(href='/registration') Register
+    .form-inline.my-2.my-lg-0
+      button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
+.container
+  br
+  br
+  .row
+    .col-25(style='width: 100%;')
+      .jumbotron(style='background: #D9E0E7; ')
+        h1.display-4 Welcome to Randwind!
+        p.lead
+          | The random number generator that analyzes wind currents to create truly random numbers!
+        hr
+        form(action="/generated_string", method="get")
+          div.form-group.row
+            .col-md-6.mb-6
+              label(for='generateAmount') How many characters long do you want the random string?
+              input#generateAmount.form-control(type='number' name='strLength' placeholder='# of characters' value='1' required='')
+          div.form-group.row
+            p.lead
+              | Which characters will make up the random string?
+          .form-row
+            .custom-control.custom-radio.custom-control-inline
+              input#8_digits.custom-control-input(type='radio' name='uniqueCharachters' value='8')
+              label.custom-control-label(for='8_digits') 8-digits(0-7)
+            .custom-control.custom-radio.custom-control-inline
+              input#10_digits.custom-control-input(type='radio' name='uniqueCharachters'  value='10')
+              label.custom-control-label(for='10_digits') 10-digits(0-9)
+            .custom-control.custom-radio.custom-control-inline
+              input#16_digits.custom-control-input(type='radio' name='uniqueCharachters'  value='16')
+              label.custom-control-label(for='16_digits') 16-digits(0-9 and a-f)
+            .custom-control.custom-radio.custom-control-inline
+              input#94_digits.custom-control-input(type='radio' name='uniqueCharachters'  value='94')
+              label.custom-control-label(for='94_digits') 94 ASCII characters
+          br
+          button.btn.btn-primary(type='submit' id='createString') Generate!
+        hr
+        p Built using bootstrap.
+script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js' integrity='sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut' crossorigin='anonymous')
+script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js' integrity='sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k' crossorigin='anonymous')
+//script(src='../resources/js/my_scripts.js')

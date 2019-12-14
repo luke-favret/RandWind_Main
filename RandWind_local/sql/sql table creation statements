@@ -1,0 +1,17 @@
+DROP TABLE registration;
+CREATE TABLE IF NOT EXISTS registration (
+	id SERIAL PRIMARY KEY,
+	user_name VARCHAR(50) NOT NULL,
+	user_email VARCHAR(50) NOT NULL,
+	user_pass VARCHAR(50) NOT NULL,
+	business VARCHAR(10),
+	security VARCHAR(10)
+);
+
+DROP TABLE random_strings;
+CREATE TABLE IF NOT EXISTS random_strins (
+	string_id SERIAL PRIMARY KEY,
+	rand_string text,
+	user_id INT NULL,
+	FOREIGN KEY (user_id) REFERENCES registration(id)
+);
