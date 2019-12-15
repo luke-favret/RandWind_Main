@@ -24,9 +24,18 @@
 	margin-top: 10px;
   }
   
-  #message p {
-	padding: 10px 35px;
-	font-size: 18px;
+#message p {
+padding: 10px 35px;
+font-size: 18px;
+}
+
+#myVideo {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	min-width: 100%;
+	min-height: 100%;
+	z-index: -10;
   }
   
   /* Add a green text color and a checkmark when the requirements are right */
