@@ -32,7 +32,8 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
       li.nav-item.active
         a.nav-link(href='/registration') Register
     .form-inline.my-2.my-lg-0
-      button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
+      form(action='/logout' method='post')
+        button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
 .container
   form(action='/' method='post')
     .form-group.row

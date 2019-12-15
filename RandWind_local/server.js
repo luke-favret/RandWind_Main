@@ -9,7 +9,7 @@ var express = require('express'); //Ensure our express framework has been added
 var session = require('express-session');
 var app = express();
 var bodyParser = require('body-parser'); //Ensure our body-parser tool has been added
-var cookieParser = require('cookie-parser'); //cookies
+//var cookieParser = require('cookie-parser'); //cookies //NO LONGER NEEDED Since version 1.5.0 of express session
 app.use(bodyParser.json());              // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
@@ -18,6 +18,8 @@ const saltRounds = 10;
 
 const pug = require('pug');
 
+
+const uuidv1 = require('uuid/v1'); //Used to generate unique strings (For session ID in our case)
 //Create Database Connection
 var pgp = require('pg-promise')();
 
@@ -39,40 +41,48 @@ const dbConfig = {
 	password: 'password'//'cat96'
 };
 
-var db = pgp(dbConfig);
+const db = pgp(dbConfig);
 
 // set the view engine to pug
 app.set('view engine', 'pug');
 app.use(express.static(__dirname + '/'));//This line is necessary for us to use relative paths and access our resources directory
 
-app.use(session({
-    key: 'user_sid',
+
+var mySession = {
+	genid: function(req) {
+		var myID = uuidv1();
+		console.log("Cookie ID: ", myID);
+		return myID;
+		//return uuidv1(); // use UUIDs for session IDs (makes unique ses ID)
+	  },
+    //key: 'user_sid',
     secret: 'badabadaRadaRada',
     resave: false,
     saveUninitialized: false,
     cookie: {
         expires: 600000
     }
-}));
+};
+
+if (app.get('env') === 'production') { //This makes it so our cookies are secure/only work over TSL/SSL if the environment is production (So we can still dev in usecure env)
+	app.set('trust proxy', 1) // trust first proxy
+	mySession.cookie.secure = true // serve secure cookies
+};
+
+app.use(session(mySession));
+
+
+
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
 app.use((req, res, next) => {
-    if (req.cookies.user_sid && !req.session.user) {
+    if (!req.session.userEmail && req.session.cookie) {
         res.clearCookie('user_sid');        
     }
-    next();
+	next();
+	return;
 });
-
-
-// middleware function to check for logged-in users
-const isLoggedIn = (req, res, next) => {
-    if (req.session.user && req.cookies.user_sid) {
-        return true;
-    } else {
-		return false;
-    }    
-};
 
 
 
@@ -93,6 +103,19 @@ app.use(bodyParser.json());
 
 
 /******************************************* HELPER FUNCTIONS ******************************************/
+
+// middleware function to check for logged-in users
+const isLoggedIn = (req, res, next) => {
+	console.log("islogged func entered");
+    if (req.session.userEmail) {
+		console.log("Logged in");
+        return true;
+    } else {
+		console.log("Not Logged in");
+		return false;
+    }    
+};
+
 const checkPassword = async (userEmail, userPassword) => {
 	
 	db.one('SELECT user_pass FROM registration WHERE user_email=$1', [userEmail], h => h)
@@ -120,13 +143,13 @@ const registerUser = async (name,email,password,business,security) => {
 	db.none('INSERT INTO registration(user_name, user_email, user_pass, business, security) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING', [name,email,password,business,security])
 	.then(() => {
 		console.log('Register success')
-		return true
+		return true;
 	})
 	.catch(error => {
 		// display error message in case an error
 		//req.flash('error', error); //if this doesn't work for you replace with console.log
 		console.log('error',error)
-		return false
+		return false;
 	});
 }
 
@@ -141,6 +164,7 @@ app.get('/', function(req, res) {
 	res.render('pages/home',{
 		my_title:"Home Page"
 	});
+	return;
 });
 
 app.get('/generated_string', function(req, res) {
@@ -162,7 +186,8 @@ app.get('/generated_string', function(req, res) {
 		//			my_title:"Generated String",
 		//			randSTR: data.toString()
 		//		});
-    //});
+	//});
+	return;
 });
 
 // about page
@@ -170,48 +195,58 @@ app.get('/about', function(req, res) {
 	res.render('pages/about',{
 		my_title:"About Page"
 	});
-	getHashByEmail('onetest@test.com'); //One Test onetest@test.com passwordTEST01 
+	return;
 });
 
 // saved strins
 app.get('/saved_strings', function(req, res) { 
-	if(!isLoggedIn){ //If not logged in, session checker forces user to login page
-		res.redirect('/')
+	if(!isLoggedIn(req)){ //If not logged in, session checker forces user to login page
+		res.redirect('/');
+		return;
 	}
 	res.render('pages/saved_strings',{
 		local_css:"signin.css",
 		my_title:"Login Page"
 	});
+	return;
 });
 
 // login page
 app.get('/login', function(req, res) {
-	if(isLoggedIn){
-		res.redirect('/')
+	if(isLoggedIn(req)){
+		res.redirect('/');
+		return;
 	}
 	res.render('pages/login',{
 		local_css:"signin.css",
 		my_title:"Login Page"
 	});
+	return;
 });
 
 app.post('/auth', function(req, res) { //Hitting login
+	console.log("Login Auth started");
 	var email = req.body.inputEmail;
 	var password = req.body.inputPassword;
 	console.log(email,password)
 	if (email && password) {
 		if(checkPassword(email, password)) { //Succesful login
 			req.session.loggedin = true;
-			req.session.email = email;
-			res.redirect('/home');
+			req.session.userEmail = email;
+			console.log("Login Succesful");
+			res.redirect('/');
+			return;
 		}else { //Insuccesful login
+			console.log("Login Failed");
 			res.send('Incorrect email and/or Password!');
 		}
 		
 	} else {
+		console.log("Email/password absent")
 		res.send('Please enter email and Password!');
 		res.end();
 	}
+	return;
 });
 
 
@@ -219,12 +254,14 @@ app.post('/auth', function(req, res) { //Hitting login
 
 // registration page
 app.get('/registration', function(req, res) {
-	if(isLoggedIn){
-		res.redirect('/')
+	if(isLoggedIn(req)){
+		res.redirect('/');
+		return;
 	}
 	res.render('pages/registration',{
 		my_title:"Registration Page"
 	});
+	return;
 });
 
 //returns to home screen after successfully registering
@@ -241,32 +278,10 @@ app.post('/', function(req, res) {
 			password = hash;
 			console.log(hash)
 			registerUser(name,email,password,business,security);
-
-			/*
-			var insert_statement = "INSERT INTO registration(user_name, user_email, user_pass, business, security) VALUES('" + name + "','" +
-							email + "','" + password +"','" + business + "','" + security + "') ON CONFLICT DO NOTHING;";
-			console.log("Insert variable created")
-			db.task('get-everything', task => {
-				return task.batch([
-					task.any(insert_statement),
-				]);
-			})
-			.then(info => {
-				
-			})
-			.catch(error => {
-				// display error message in case an error
-					//req.flash('error', error); //if this doesn't work for you replace with console.log
-					console.log('error',error)
-					res.render('pages/home', {
-						title: 'Home Page'
-					})
-			}); */
-
 		});
-		res.render('pages/home',{
-			my_title: "Home Page"
-		})
+
+		res.redirect('/');
+		return;
 	});
 
 	console.log(name);
@@ -274,6 +289,7 @@ app.post('/', function(req, res) {
 	console.log(password);
 	console.log(business);
 	console.log(security);
+	return;
 	
 });
 

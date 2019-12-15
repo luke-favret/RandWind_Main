@@ -10,7 +10,7 @@ DROP TABLE registration CASCADE;
 CREATE TABLE IF NOT EXISTS registration (
 	user_sid SERIAL PRIMARY KEY,
 	user_name VARCHAR(50) NOT NULL,
-	user_email VARCHAR(50) NOT NULL,
+	user_email VARCHAR(50) UNIQUE NOT NULL,
 	user_pass CHAR(60) NOT NULL,
 	business VARCHAR(10),
 	security VARCHAR(10)
