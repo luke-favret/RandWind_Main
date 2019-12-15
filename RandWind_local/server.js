@@ -50,10 +50,7 @@ app.use(express.static(__dirname + '/'));//This line is necessary for us to use 
 
 var mySession = {
 	genid: function(req) {
-		var myID = uuidv1();
-		console.log("Cookie ID: ", myID);
-		return myID;
-		//return uuidv1(); // use UUIDs for session IDs (makes unique ses ID)
+		return uuidv1(); // use UUIDs for session IDs (makes unique ses ID)
 	  },
     //key: 'user_sid',
     secret: 'badabadaRadaRada',
@@ -201,7 +198,7 @@ app.get('/about', function(req, res) {
 // saved strins
 app.get('/saved_strings', function(req, res) { 
 	if(!isLoggedIn(req)){ //If not logged in, session checker forces user to login page
-		res.redirect('/');
+		res.redirect('/login');
 		return;
 	}
 	res.render('pages/saved_strings',{
@@ -249,7 +246,11 @@ app.post('/auth', function(req, res) { //Hitting login
 	return;
 });
 
-
+app.post('/logout', function(req,res){
+	req.session.destroy();
+	res.redirect('/');
+	return;
+});
 
 
 // registration page
@@ -284,11 +285,10 @@ app.post('/', function(req, res) {
 		return;
 	});
 
-	console.log(name);
-	console.log(email);
-	console.log(password);
-	console.log(business);
-	console.log(security);
+	// console.log(name);
+	// console.log(email);
+	// console.log(business);
+	// console.log(security);
 	return;
 	
 });
