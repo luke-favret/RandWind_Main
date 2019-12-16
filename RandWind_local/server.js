@@ -10,6 +10,9 @@ var session = require('express-session');
 var app = express();
 var bodyParser = require('body-parser'); //Ensure our body-parser tool has been added
 //var cookieParser = require('cookie-parser'); //cookies //NO LONGER NEEDED Since version 1.5.0 of express session
+const { check, validationResult } = require('express-validator'); //For validating and sanitizing inputs
+
+
 app.use(bodyParser.json());              // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
@@ -68,7 +71,7 @@ if (app.get('env') === 'production') { //This makes it so our cookies are secure
 
 app.use(session(mySession));
 
-
+console.log("node executed");
 
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
@@ -105,10 +108,10 @@ app.use(bodyParser.json());
 const isLoggedIn = (req, res, next) => {
 	console.log("islogged func entered");
     if (req.session.userEmail) {
-		console.log("Logged in");
+		//console.log("Logged in");
         return true;
     } else {
-		console.log("Not Logged in");
+		//console.log("Not Logged in");
 		return false;
     }    
 };
@@ -150,6 +153,20 @@ const registerUser = async (name,email,password,business,security) => {
 	});
 }
 
+const insertString = async (insertionString, email) => { 
+	console.log('Inserting String');
+	db.none('INSERT INTO random_strings(rand_string, user_email) VALUES($1, $2) ON CONFLICT DO NOTHING', [insertionString,email])
+	.then(() => {
+		console.log('String Insertion success')
+		return true;
+	})
+	.catch(error => {
+		// display error message in case an error
+		//req.flash('error', error); //if this doesn't work for you replace with console.log
+		console.log('string insertion error',error)
+		return false;
+	});
+}
 
 
 
@@ -159,7 +176,8 @@ const registerUser = async (name,email,password,business,security) => {
 // home page
 app.get('/', function(req, res) {
 	res.render('pages/home',{
-		my_title:"Home Page"
+		my_title:"Home Page",
+		loggedIn: isLoggedIn(req)
 	});
 	return;
 });
@@ -168,13 +186,17 @@ app.get('/generated_string', function(req, res) {
 
     // calling python scripts
 		var spawn = require("child_process").spawnSync;
-		var process = spawn('python', ["./python/driver.py", req.query.strLength, req.query.uniqueCharachters])
-
-
+		var process = spawn('python', ["./python/driver.py", req.query.strLength, req.query.uniqueCharachters]);
 		console.log(process.output[2].toString());
+
+		var generatedString = process.stdout.toString();
+		req.session.currentString = generatedString; //sets string in cookie (for saving)
+
+
 		res.render('pages/generated_string',{
 			my_title:"Generated String",
-			randSTR: process.stdout.toString()
+			randSTR: generatedString,
+			loggedIn: isLoggedIn(req)
 		});
     // This is for asycn process
 		//process.stdout.on('data', function(data) {
@@ -190,7 +212,8 @@ app.get('/generated_string', function(req, res) {
 // about page
 app.get('/about', function(req, res) {
 	res.render('pages/about',{
-		my_title:"About Page"
+		my_title:"About Page",
+		loggedIn: isLoggedIn(req)
 	});
 	return;
 });
@@ -203,7 +226,8 @@ app.get('/saved_strings', function(req, res) {
 	}
 	res.render('pages/saved_strings',{
 		local_css:"signin.css",
-		my_title:"Login Page"
+		my_title:"Login Page",
+		loggedIn: isLoggedIn(req)
 	});
 	return;
 });
@@ -216,15 +240,16 @@ app.get('/login', function(req, res) {
 	}
 	res.render('pages/login',{
 		local_css:"signin.css",
-		my_title:"Login Page"
+		my_title:"Login Page",
+		loggedIn: isLoggedIn(req)
 	});
 	return;
 });
 
 app.post('/auth', function(req, res) { //Hitting login
 	console.log("Login Auth started");
-	var email = req.body.inputEmail;
-	var password = req.body.inputPassword;
+	const email = req.body.inputEmail;
+	const password = req.body.inputPassword;
 	console.log(email,password)
 	if (email && password) {
 		if(checkPassword(email, password)) { //Succesful login
@@ -260,31 +285,50 @@ app.get('/registration', function(req, res) {
 		return;
 	}
 	res.render('pages/registration',{
-		my_title:"Registration Page"
+		my_title:"Registration Page",
+		loggedIn: isLoggedIn(req)
 	});
 	return;
 });
 
 //returns to home screen after successfully registering
-app.post('/', function(req, res) {
-	var name = req.body.fullName;
-	var email = req.body.emailAddress;
-	var password = req.body.passwordConfirm;
-	var business = req.body.businessStatus;
-	var security = req.body.securityStatus;
+app.post('/register', [
+	check('fullName', 'Your name must be between 2 and 50 characters').isLength({ min: 2, max:50 }).trim().escape(),
+	check('emailAddress', 'Invalid Email').not().isEmpty().isEmail().normalizeEmail(),
+	check('passwordConfirm', 'Password must be between 8 and 20 characters').isLength({ min: 8, max: 20 }),
+	check('passwordConfirm', 'Passwords do not match').custom((value, {req}) => (value === req.body.passwordFirst)),
+  ], (req, res) => {
 
-	bcrypt.genSalt(saltRounds, function(err, salt) {
-		bcrypt.hash(password, salt, function(err, hash) {
-			// Store hash in your password DB.
-			password = hash;
-			console.log(hash)
-			registerUser(name,email,password,business,security);
-		});
-
-		res.redirect('/');
+	const validationErrors = validationResult(req);
+  	if(!validationErrors.isEmpty()){
+		console.log(validationErrors);
+		var errorsList = '';
+		for (var i = 0; i < validationErrors.length; i++) {
+		errorsList += '<li>' + validationErrors[i].msg + '</li>';
+		}
 		return;
-	});
+	}else{
+	
+		const name = req.body.fullName;
+		const email = req.body.emailAddress;
+		const password = req.body.passwordConfirm;
+		const business = req.body.businessStatus;
+		const security = req.body.securityStatus;
 
+		console.log(business);
+		console.log(security);
+
+
+		bcrypt.genSalt(saltRounds, function(err, salt) {
+			bcrypt.hash(password, salt, function(err, hash) {
+				//console.log(hash)
+				registerUser(name,email,hash,business,security);
+			});
+
+			res.redirect('/');
+			return;
+		});
+	}
 	// console.log(name);
 	// console.log(email);
 	// console.log(business);
@@ -293,7 +337,29 @@ app.post('/', function(req, res) {
 	
 });
 
-
+app.post('/saveString', [
+	check('fullName', 'Your name must be between 2 and 50 characters').isLength({ min: 2, max:50 }).trim().escape(),
+  ], (req, res) => {
+	const validationErrors = validationResult(req);
+  	if(!validationErrors.isEmpty()){
+		console.log(validationErrors);
+		var errorsList = '';
+		for (var i = 0; i < validationErrors.length; i++) {
+		errorsList += '<li>' + validationErrors[i].msg + '</li>';
+		}
+		return;
+	}else{
+		if(isLoggedIn(req)){
+			const insertionString = req.session.currentString;
+			insertString(insertionString, req.session.userEmail);
+			res.redirect('/saved_strings');
+			return;
+		}else{res.redirect('/');
+		return;
+		}
+	return;
+	
+});
 
 //app.listen(process.env.PORT);
 app.listen(3000);

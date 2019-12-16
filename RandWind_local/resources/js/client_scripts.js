@@ -1,4 +1,6 @@
 console.log('Client JS loaded')
+/*********************** REGISTRATION SCRIPTS *************************/
+
 /* Note that you do NOT have to do a document.getElementById anywhere in this exercise. Use the elements below */        
 var myInput = document.getElementById("passwordFirst");
 var confirmMyInput = document.getElementById("passwordConfirm");
@@ -95,11 +97,43 @@ function enableButton(letter, capital, number, length, match) {
     var condition = letter.classList.contains("valid") && capital.classList.contains("valid") && number.classList.contains("valid") && length.classList.contains("valid") && match.classList.contains("valid"); // TODO: Replace false with the correct condition
     console.log(condition)
     if(condition) {       
-            button.disabled = false;
-        }        
-    }    
-
-
-function onClickFunction() {
-    alert("Hey! I'm all green! Well done.")
+        button.disabled = false;
+    }else{
+        button.disabled = true;
+    }
 }
+
+
+/**********************GENERATE STRINGS SCRIPTS *******************/
+$('#saveGeneration').click(function () {
+    $.ajax({
+      url: '/loadStrings',
+      type: 'POST',
+      cache: false,
+      data: {
+        name: $('#name').val(),
+        classYear: $('#classYear').val(),
+        weekday: $('#weekday').val(),
+        email: $('#email').val(),
+        phoneNumber: $('#phoneNumber').val(),
+        password: $('#password').val(),
+        confirmPassword: $('#confirmPassword').val()
+      },
+      success: function () {
+        $('#error-group').css('display', 'none');
+        alert('String Saved');
+      },
+      error: function (data) {
+        $('#error-group').css('display', 'block');
+        var errors = JSON.parse(data.responseText);
+        var errorsContainer = $('#errors');
+        errorsContainer.innerHTML = '';
+        var errorsList = '';
+  
+        for (var i = 0; i < errors.length; i++) {
+          errorsList += '<li>' + errors[i].msg + '</li>';
+        }
+        errorsContainer.html(errorsList);
+      }
+    });
+  });

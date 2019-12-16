@@ -22,14 +22,17 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
           | About
           span.sr-only (current)
       li.nav-item
-        a.nav-link(href='/saved_strings') My Generations
-      li.nav-item
-        a.nav-link(href='/login') Login
-      li.nav-item
-        a.nav-link(href='/registration') Register
-    .form-inline.my-2.my-lg-0
-      form(action='/logout' method='post')
-        button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
+        a.nav-link(href='/saved_strings') My Generations  
+    - if(!loggedIn)
+        ul.navbar-nav.my-2.my-lg-0
+          li.nav-item
+            a.nav-link(href='/login') Login
+          li.nav-item
+            a.nav-link(href='/registration') Register
+    - else
+        .form-inline.my-2.my-lg-0
+          form(action='/logout' method='post')
+            button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
 .container
   br
   .jumbotron
@@ -46,7 +49,7 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
       h2 How does Randwind work?
       hr
       p
-        | First, RandWind recieves the parameters you enter into the form. Then it passes the paramaters to our server. At this point, our backend begins analyzing a grayscale iamge of wind currents. We attempt to determine the area with the greatest volatility on the first frame, then we  measure the change of wind over time in this area. This change is completely unpredictable and generatores our randomness.
+        | First, RandWind recieves the parameters you enter into the form. Then it passes the paramaters to our server. At this point, our backend begins analyzing a grayscale image of wind currents. We attempt to determine the area with the greatest volatility on the first frame, then we  measure the change of wind over time in this area. This change is completely unpredictable and generatores our randomness.
         | After this, we apply the parameters the user entered to the random &apos;seed&apos; we just created, and from that generate the random numbers which are thne returned to the user.
     h2 Who created RandWind?
     hr

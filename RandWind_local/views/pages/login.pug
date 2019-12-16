@@ -35,13 +35,16 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
           span.sr-only (current)
       li.nav-item
         a.nav-link(href='/saved_strings') My Generations
-      li.nav-item.active
-        a.nav-link(href='/login') Login
-      li.nav-item
-        a.nav-link(href='/registration') Register
-    .form-inline.my-2.my-lg-0
-      form(action='/logout' method='post')
-        button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
+    - if(!loggedIn)
+        ul.navbar-nav.my-2.my-lg-0
+          li.nav-item
+            a.nav-link(href='/login') Login
+          li.nav-item
+            a.nav-link(href='/registration') Register
+    - else
+        .form-inline.my-2.my-lg-0
+          form(action='/logout' method='post')
+            button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
 .container
   .row
     .col-lg-12

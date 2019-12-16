@@ -23,13 +23,16 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
           span.sr-only (current)
       li.nav-item
         a.nav-link(href='/saved_strings') My Generations
-      li.nav-item
-        a.nav-link(href='/login') Login
-      li.nav-item
-        a.nav-link(href='/registration') Register
-    .form-inline.my-2.my-lg-0
-      form(action='/logout' method='post')
-        button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
+    - if(!loggedIn)
+        ul.navbar-nav.my-2.my-lg-0
+          li.nav-item
+            a.nav-link(href='/login') Login
+          li.nav-item
+            a.nav-link(href='/registration') Register
+    - else
+        .form-inline.my-2.my-lg-0
+          form(action='/logout' method='post')
+            button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
 video#myVideo(autoplay='' muted='' loop='')
   source(src='resources/media/grasswind.mp4' type='video/mp4')
 .container
@@ -37,7 +40,7 @@ video#myVideo(autoplay='' muted='' loop='')
   br
   .row
     .col-25(style='width: 100%;')
-      .jumbotron(style='background: #D9E0E7; ')
+      .jumbotron(style='background: #2e4052; ')
         h1.display-4 Welcome to Randwind!
         p.lead
           | The random number generator that analyzes wind currents to create truly random numbers!

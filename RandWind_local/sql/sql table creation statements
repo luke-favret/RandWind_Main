@@ -1,9 +1,9 @@
 DROP TABLE random_strings CASCADE;
 CREATE TABLE IF NOT EXISTS random_strings (
 	string_id SERIAL PRIMARY KEY,
-	rand_string text,
-	user_id INT NULL,
-	FOREIGN KEY (user_id) REFERENCES registration(id)
+	rand_string VARCHAR(500),
+	user_email VARCHAR(50) INT NOT NULL,
+	FOREIGN KEY (user_email) REFERENCES registration(user_email)
 );
 
 DROP TABLE registration CASCADE;
