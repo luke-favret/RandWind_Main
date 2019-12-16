@@ -357,6 +357,7 @@ app.post('/saveString', [
 		}else{res.redirect('/');
 		return;
 		}
+	}
 	return;
 	
 });
