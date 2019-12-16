@@ -345,7 +345,7 @@ app.post('/register', [
 });
 
 app.post('/saveString', [
-	check('fullName', 'Your name must be between 2 and 50 characters').isLength({ min: 2, max:50 }).trim().escape(),
+	check(req.session.currentString, 'String Corrupted').not().isEmpty().trim().escape(),
   ], (req, res) => {
 	const validationErrors = validationResult(req);
   	if(!validationErrors.isEmpty()){
