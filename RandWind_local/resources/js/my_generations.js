@@ -2,7 +2,7 @@
 
 $(document).ready(function(){
     $.ajax({
-        url: 'http://localhost:3000/load_generations',
+        url: 'http://localhost:3000/load_generations', //Change this for heroku
         type: 'POST',
         data: 'Test',
         cache: false,

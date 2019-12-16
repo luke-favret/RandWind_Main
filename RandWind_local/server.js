@@ -5,6 +5,12 @@
   Body-Parser  - A tool to help use parse the data in a post request
   Pg-Promise   - A database tool to help use connect to our PostgreSQL database
 ***********************/
+/******* GETTING RANDWIND TO WORK ON HEROKU
+ * 
+ * You need to change the dbconfig, and the port that ther server.js listens on
+ * In my_generations.js you need to change the URL
+ */
+
 var express = require('express'); //Ensure our express framework has been added
 var session = require('express-session');
 var app = express();
@@ -365,7 +371,7 @@ app.post('/saveString', [
 
 
 app.post('/load_generations', function(req,res){
-	console.log("loadstrings started");
+	//console.log("loadstrings started");
 	db.any('SELECT rand_string, string_id FROM random_strings WHERE user_email=$1', [req.session.userEmail])
 	.then(retrievedStrings => {
 		if (retrievedStrings) {
