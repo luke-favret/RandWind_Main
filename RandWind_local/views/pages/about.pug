@@ -33,6 +33,7 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
         .form-inline.my-2.my-lg-0
           form(action='/logout' method='post')
             button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
+
 .container
   br
   .jumbotron
@@ -40,20 +41,23 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
       | About
       img(src='../resources/img/randwind_logo.png' alt='' width='30%' height='30%')
     p.lead Detailed information on what RandWind is and how it works
-  .col-26(style='overflow: hidden;')
-    h2 What is RandWind?
-    hr
-    p
-      | Randwind is a random number generator that uses wind currents to generate randomness.
-    .bg-light(style='padding-left: 10px;')
-      h2 How does Randwind work?
+  .bg-light(style='padding-left: 10px;')
+    .col-26(style='overflow: hidden;')
+      h2 What is RandWind?
       hr
       p
-        | First, RandWind recieves the parameters you enter into the form. Then it passes the paramaters to our server. At this point, our backend begins analyzing a grayscale image of wind currents. We attempt to determine the area with the greatest volatility on the first frame, then we  measure the change of wind over time in this area. This change is completely unpredictable and generatores our randomness.
-        | After this, we apply the parameters the user entered to the random &apos;seed&apos; we just created, and from that generate the random numbers which are thne returned to the user.
-    h2 Who created RandWind?
-    hr
-    p Team 3 of the CSCI 3308 6:30-7:40 recitation
+        | Randwind is a random number generator that uses wind currents to generate randomness.
+      
+        h2 How does Randwind work?
+        hr
+        p
+          | First, RandWind recieves the parameters you enter into the form. Then it passes the paramaters to our server. At this point, our backend begins analyzing a grayscale image of wind currents. We attempt to determine the area with the greatest volatility on the first frame, then we  measure the change of wind over time in this area. This change is completely unpredictable and generatores our randomness.
+          | After this, we apply the parameters the user entered to the random &apos;seed&apos; we just created, and from that generate the random numbers which are thne returned to the user.
+          video#windVideo(autoplay='' muted='' loop='')
+            source(src='python/cfd.mp4' type='video/mp4')
+      h2 Who created RandWind?
+      hr
+      p Team 3 of the CSCI 3308 6:30-7:40 recitation
 script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js' integrity='sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut' crossorigin='anonymous')
 script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js' integrity='sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k' crossorigin='anonymous')

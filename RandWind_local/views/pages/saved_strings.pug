@@ -23,32 +23,33 @@ nav.navbar.navbar-expand-lg.navbar-light(style='background: #D7E6F3;')
           span.sr-only (current)
       li.nav-item.active
         a.nav-link(href='/saved_strings') My Generations
-      li.nav-item
-        a.nav-link(href='/login') Login
-      li.nav-item
-        a.nav-link(href='/registration') Register
-    .form-inline.my-2.my-lg-0
-      form(action='/logout' method='post')
-        button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
+    - if(!loggedIn)
+        ul.navbar-nav.my-2.my-lg-0
+          li.nav-item
+            a.nav-link(href='/login') Login
+          li.nav-item
+            a.nav-link(href='/registration') Register
+    - else
+        .form-inline.my-2.my-lg-0
+          form(action='/logout' method='post')
+            button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Logout
 .container
   br
   h1 Your Generated Items
   hr
   br
-  .row
-    .col-sm-6
-      .card
-        .card-body
-          h5.card-title My Random Set 1
-          p.card-text  Small Preview Here
-          a.btn.btn-primary(href='#') View Set
-    .col-sm-6
-      .card
-        .card-body
-          h5.card-title My Random Set 2
-          p.card-text  Small Preview Here
-          a.btn.btn-primary(href='#') View Set
-script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
+  #stringContainer
+textarea#holdtext(style='display:none;')
+script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js' crossorigin='anonymous')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js' integrity='sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut' crossorigin='anonymous')
 script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js' integrity='sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k' crossorigin='anonymous')
-script(src='../resources/js/my_scripts.js')
+script(src='../resources/js/my_generations.js')
+script(src='https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js')
+script.
+  var clipboard = new ClipboardJS('.btn');
+  clipboard.on('success', function(e) {
+  console.log(e);
+  });
+  clipboard.on('error', function(e) {
+  console.log(e);
+  });

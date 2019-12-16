@@ -8,6 +8,7 @@
 var express = require('express'); //Ensure our express framework has been added
 var session = require('express-session');
 var app = express();
+const router = express.Router()
 var bodyParser = require('body-parser'); //Ensure our body-parser tool has been added
 //var cookieParser = require('cookie-parser'); //cookies //NO LONGER NEEDED Since version 1.5.0 of express session
 const { check, validationResult } = require('express-validator'); //For validating and sanitizing inputs
@@ -106,7 +107,7 @@ app.use(bodyParser.json());
 
 // middleware function to check for logged-in users
 const isLoggedIn = (req, res, next) => {
-	console.log("islogged func entered");
+	//console.log("islogged func entered");
     if (req.session.userEmail) {
 		//console.log("Logged in");
         return true;
@@ -250,7 +251,7 @@ app.post('/auth', function(req, res) { //Hitting login
 	console.log("Login Auth started");
 	const email = req.body.inputEmail;
 	const password = req.body.inputPassword;
-	console.log(email,password)
+	////
 	if (email && password) {
 		if(checkPassword(email, password)) { //Succesful login
 			req.session.loggedin = true;
@@ -355,11 +356,31 @@ app.post('/saveString', [
 			res.redirect('/saved_strings');
 			return;
 		}else{res.redirect('/');
-		return;
+			return;
 		}
 	}
 	return;
 	
+});
+
+
+app.post('/load_generations', function(req,res){
+	console.log("loadstrings started");
+	db.any('SELECT rand_string, string_id FROM random_strings WHERE user_email=$1', [req.session.userEmail])
+	.then(retrievedStrings => {
+		if (retrievedStrings) {
+			res.send(retrievedStrings);
+			return retrievedStrings;
+		  } else {
+			console.log("No strings present")
+			res.send({});
+		  }
+	})
+	.catch(error => {
+		// display error message in case an error
+			//req.flash('error', error); //if this doesn't work for you replace with console.log
+			console.log(error);
+	});
 });
 
 //app.listen(process.env.PORT);

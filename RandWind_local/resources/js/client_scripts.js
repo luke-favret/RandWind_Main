@@ -104,36 +104,3 @@ function enableButton(letter, capital, number, length, match) {
 }
 
 
-/**********************GENERATE STRINGS SCRIPTS *******************/
-$('#saveGeneration').click(function () {
-    $.ajax({
-      url: '/loadStrings',
-      type: 'POST',
-      cache: false,
-      data: {
-        name: $('#name').val(),
-        classYear: $('#classYear').val(),
-        weekday: $('#weekday').val(),
-        email: $('#email').val(),
-        phoneNumber: $('#phoneNumber').val(),
-        password: $('#password').val(),
-        confirmPassword: $('#confirmPassword').val()
-      },
-      success: function () {
-        $('#error-group').css('display', 'none');
-        alert('String Saved');
-      },
-      error: function (data) {
-        $('#error-group').css('display', 'block');
-        var errors = JSON.parse(data.responseText);
-        var errorsContainer = $('#errors');
-        errorsContainer.innerHTML = '';
-        var errorsList = '';
-  
-        for (var i = 0; i < errors.length; i++) {
-          errorsList += '<li>' + errors[i].msg + '</li>';
-        }
-        errorsContainer.html(errorsList);
-      }
-    });
-  });
