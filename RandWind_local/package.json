@@ -13,7 +13,7 @@
         "express-session": "^1.17.0",
         "express-validator": "^6.3.0",
         "pg-promise": "^8.5.1",
-        "pug": "^2.0.4",
+        "pug": "^3.0.1",
         "session": "^0.1.0",
         "uuid": "^3.3.3"
     }
